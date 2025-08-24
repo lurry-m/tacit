@@ -1,4 +1,5 @@
 tacit/compiled/*
+tacit/doc/*
 tacit/*.bak
 tacit/*.html
 tacit/*.css
