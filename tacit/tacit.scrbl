@@ -7,7 +7,7 @@
                      racket/function
                      racket/list))
 
-@title{point-free}
+@title{Useful Tacit function}
 
 @(define the-eval (make-base-eval))
 @(the-eval '(require "main.rkt"
@@ -27,5 +27,6 @@ source code: @url["https://github.com/lurry-m/tacit"]
 
 @defform[(fork1 (first ...) second ...)]{
   Returns the a unary function that applies the first function to the second functions.
-    ((fork1 (/) (curry apply +) length))
-    (range 10)}
+     @examples[#:eval the-eval
+     ((fork1 (/) (curry apply +) length)
+      (range 10))]}
