@@ -1,5 +1,5 @@
-point-free/compiled/*
-point-free/*.bak
-point-free/*.html
-point-free/*.css
-point-free/*.js
+tacit/compiled/*
+tacit/*.bak
+tacit/*.html
+tacit/*.css
+tacit/*.js

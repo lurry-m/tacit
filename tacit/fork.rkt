@@ -47,7 +47,7 @@
          (evaluator '(require content ...))))
 
 (begin-for-syntax
-  (define ((append-syntax stx identifier) append-string)
+  (define (append-syntax stx identifier append-string)
     (datum->syntax
      stx
      (string->symbol
