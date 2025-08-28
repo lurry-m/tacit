@@ -25,8 +25,14 @@ source code: @url["https://github.com/lurry-m/tacit"]
 @section{Fork}
 
 
-@defform[(fork1 (first ...) second ...)]{
-  Returns the a unary function that applies the first function to the second functions.
+@defform[(fork (first ...) second ...)]{
+  Returns the a unary function that applies the all the second arguments to the input and then the first arguments on the result.
      @examples[#:eval the-eval
-     ((fork1 (/) (curry apply +) length)
-      (range 10))]}
+     (define sum (curry apply +))
+     (define average (fork1 (/) sum length))
+     (average (range 10))]}
+
+@defform[(fork2 (first ...) second ...)]{
+  Returns the a binary function that applies the all the second arguments to the input and then the first arguments on the result.
+     @examples[#:eval the-eval
+     ((fork2 (list) + *) 5 7)]}

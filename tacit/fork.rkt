@@ -21,7 +21,7 @@
        (transformer ...)])))
 
 (define-syntax-rule
-  (fork1 (first ...) second ...)
+  (fork (first ...) second ...)
   (lambda (x) (first ... (second x) ...)))
 
 (define-syntax-rule
@@ -29,8 +29,8 @@
   (lambda (x y) (first ... (second x y) ...)))
 
 (define-syntax-rule
-  (fork (first ...) second ...)
-  (lambda x (first ... (apply second x) ...)))
+  (fork3 (first ...) second ...)
+  (lambda (x y z) (first ... (second x y z) ...)))
 
 (define-syntax-case
   (fork* (first ...) second ...)

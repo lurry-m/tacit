@@ -7,4 +7,4 @@
                      "scribble-lib"
                      "rackunit-lib"
                      "racket-doc"))
-(define licence 'MIT)
+(define license 'MIT)
