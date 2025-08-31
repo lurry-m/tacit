@@ -22,12 +22,14 @@ Useful functions
 
 source code: @url["https://github.com/lurry-m/tacit"]
 
-@section{Fork}
+@section{The different variant of the fork-macros}
 
 
 @defform[(fork (first ...) second ...)]{
   Returns the a unary function that applies the all the second arguments to the input and then the first arguments on the result.
-  This can be used in various ways, because the content of the fork is not restricted to procedures.
+  @racket[fork] can be used in various ways, because the content of the fork is not restricted to procedures. 
+  
+  This is the coolest macro according to the author.
      @examples[#:eval the-eval
      (define sum (curry apply +))
      (define average (fork (/) sum length))
@@ -42,11 +44,21 @@ source code: @url["https://github.com/lurry-m/tacit"]
      (map displayln-and-negate (range 3))]}
 
 @defform[(fork2 (first ...) second ...)]{
-  Returns the a binary function that applies the all the second arguments to the input and then the first arguments on the result.
+  Similar to  @racket[fork], returns the a binary function that applies the all the second arguments to the input and then the first arguments on the result.
      @examples[#:eval the-eval
      ((fork2 (list) + * vector) 5 7)]}
 
 @defform[(fork3 (first ...) second ...)]{
-  Returns the a ternary function that applies the all the second arguments to the input and then the first arguments on the result.
+  Similar to  @racket[fork], returns the a ternary function that applies the all the second arguments to the input and then the first arguments on the result.
      @examples[#:eval the-eval
      ((fork3 (list) + * vector) 5 7 11)]}
+
+@defform[(fork* (first ...) second ...)]{
+  Similar to  @racket[fork], but the @racket[procedure-arity] is identical to the arguments provided in @racket[second].
+    @examples[#:eval the-eval
+    (define (sqr x) (* x x))
+     (define sqr-and-subtract (fork* (-) sqr sqr sqr))
+     (procedure-arity sqr-and-subtract)
+     (define pythagorean-triple? (compose zero? sqr-and-subtract))
+     (pythagorean-triple? 5 4 3)
+     (pythagorean-triple? 6 4 3)]}
