@@ -1,6 +1,6 @@
 #lang racket
 
-(provide (all-defined-out))
+(provide fork fork2 fork3 fork* define-vector define-mutable-hash)
 
 (define-syntax-rule
   (define-syntax-case*
