@@ -51,15 +51,17 @@
     (datum->syntax
      stx
      (string->symbol
-      (format "~a-~a" (syntax->datum identifier) append-string)))))
+      (format "~a~a" (syntax->datum identifier) append-string)))))
 
 (define-syntax (define-vector stx)
   (syntax-case stx ()
     [(_ identifier args)
-     (with-syntax ([set! (append-syntax stx #'identifier "set!")]
-                   [ref (append-syntax stx #'identifier "ref")]
-                   [update! (append-syntax stx #'identifier "update!")]
-                   [length (append-syntax stx #'identifier "length")])
+     (with-syntax ([set! (append-syntax stx #'identifier "-set!")]
+                   [ref (append-syntax stx #'identifier "-ref")]
+                   [update! (append-syntax stx #'identifier "-update!")]
+                   [++ (append-syntax stx #'identifier "++")]
+                   [-- (append-syntax stx #'identifier "--")]
+                   [length (append-syntax stx #'identifier "-length")])
        #'(begin
            (define identifier args)
            (unless (vector? identifier)
@@ -70,20 +72,25 @@
              (vector-ref identifier x))
            (define (update! x y)
              (vector-set! identifier x (y (vector-ref identifier x))))
+           (define (++ x)
+             (update! x add1))
+           (define (-- x)
+             (update! x sub1))
            (define (length) (vector-length identifier))))]))
 
 (define-syntax (define-mutable-hash stx)
   (syntax-case stx ()
     [(_ identifier args)
-     (with-syntax ([set! (append-syntax stx #'identifier "set!")]
-                   [ref (append-syntax stx #'identifier "ref")]
-                   [map (append-syntax stx #'identifier "map")]
-                   [for-each (append-syntax stx #'identifier "for-each")]
-                   [ref! (append-syntax stx #'identifier "ref!")]
-                   [update! (append-syntax stx #'identifier "update!")]
-                   [count (append-syntax stx #'identifier "count")]
-                   [has-key? (append-syntax stx #'identifier "has-key?")]
-                   [ref-default (append-syntax stx #'identifier "ref-default")])
+     (with-syntax ([set! (append-syntax stx #'identifier "-set!")]
+                   [ref (append-syntax stx #'identifier "-ref")]
+                   [map (append-syntax stx #'identifier "-map")]
+                   [for-each (append-syntax stx #'identifier "-for-each")]
+                   [ref! (append-syntax stx #'identifier "-ref!")]
+                   [update! (append-syntax stx #'identifier "-update!")]
+                   [++ (append-syntax stx #'identifier "++")]
+                   [-- (append-syntax stx #'identifier "--")]
+                   [count (append-syntax stx #'identifier "-count")]
+                   [has-key? (append-syntax stx #'identifier "-has-key?")])
        #'(begin
            (define identifier args)
            (unless (and (hash? identifier)
@@ -103,9 +110,11 @@
              (hash-ref! identifier x y))
            (define (update! x y)
              (hash-update! identifier x y))
+           (define (++ x)
+             (update! x add1))
+           (define (-- x)
+             (update! x sub1))
            (define (count)
              (hash-count identifier))
            (define (has-key? x)
-             (hash-has-key? identifier x))
-           (define ((ref-default my-default) x)
-             (hash-ref identifier x my-default))))]))
+             (hash-has-key? identifier x))))]))
