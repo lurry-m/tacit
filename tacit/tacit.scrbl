@@ -140,3 +140,13 @@ Then we can define a factorial function like that:
           ((Y fac) 5)]
 
 Alternatively, the fibonacci function:
+
+@examples[#:eval the-eval
+          (define fib
+            (fork (fork (if)
+                        (fork (or) zero? (compose zero? sub1))
+                        add1)
+                  (fork (fork (+))
+                        (P sub1)
+                        (P (compose sub1 sub1)))))
+          (map (Y fib) (range 10))]
