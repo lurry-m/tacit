@@ -5,14 +5,17 @@
                      racket/base
                      racket/contract
                      racket/function
-                     racket/list))
+                     racket/list
+                     math/base))
 
 @title{Useful Tacit function}
 
 @(define the-eval (make-base-eval))
 @(the-eval '(require "main.rkt"
+                     racket/contract
                      racket/function
-                     racket/list))
+                     racket/list
+                     math/base))
 
 @defmodule[tacit]
 
@@ -30,7 +33,6 @@ These macros are inspired by @hyperlink["https://en.wikipedia.org/wiki/Tacit_pro
  @racket[fork] can be used in various ways, because the content of the fork is not restricted to procedures. 
   
  @examples[#:eval the-eval
-           (define sum (curry apply +))
            (define average (fork (/) sum length))
            (average (range 10))
            (define euler-form (fork (make-rectangular) cos sin))
@@ -55,7 +57,6 @@ These macros are inspired by @hyperlink["https://en.wikipedia.org/wiki/Tacit_pro
 @defform[(fork* (first ...) second ...)]{
  Similar to  @racket[fork], but the @racket[procedure-arity] is identical to the arguments provided in @racket[second].
  @examples[#:eval the-eval
-           (define (sqr x) (* x x))
            (define sqr-and-subtract (fork* (-) sqr sqr sqr))
            (procedure-arity sqr-and-subtract)
            (define pythagorean-triple? (compose zero? sqr-and-subtract))
@@ -106,7 +107,7 @@ procedures out of the box wich are similar to @racket[struct].
            (ht-has-key? 5)
            ht]}
 
-@section{Showcase of @racket[fork]}
+@section{Showcase: Y-Combinator}
 
 The @racket[fork]-macro is actually similar to the @racket[S] function in 
 the @hyperlink["https://en.wikipedia.org/wiki/SKI_combinator_calculus"]{SKI-calculus}.
@@ -120,7 +121,7 @@ the @hyperlink["https://en.wikipedia.org/wiki/SKI_combinator_calculus"]{SKI-calc
             (fork (fork (fork ()))
                   (fork (K) K)
                   (K I)))
-          (define S
+          (define E
             (fork (fork (I))
                   (fork () I I)))
 
@@ -128,7 +129,7 @@ the @hyperlink["https://en.wikipedia.org/wiki/SKI_combinator_calculus"]{SKI-calc
           (((P add1) sqr) 10)
           (((C add1) sqr) 10)
 
-          (define Y ((C S) (P S)))]
+          (define Y ((C E) (P E)))]
 
 Then we can define a factorial function like that:
 
@@ -144,9 +145,33 @@ Alternatively, the fibonacci function:
 @examples[#:eval the-eval
           (define fib
             (fork (fork (if)
-                        (fork (or) zero? (compose zero? sub1))
-                        add1)
+                        (fork (or) zero? ((C zero?) sub1))
+                        I)
                   (fork (fork (+))
                         (P sub1)
-                        (P (compose sub1 sub1)))))
+                        (P ((C sub1) sub1)))))
           (map (Y fib) (range 10))]
+
+@section{Showcase: Easy Racket}
+
+This section is inspired by an article of @hyperlink["https://wiki.jsoftware.com/wiki/Vocabulary/Unreadability"]{The alleged unreadability of J}.
+The last section showcased some of the power of the @racket[fork], but it is barely readable. Here is a showcase of how it can also
+be used to make the code more readable, especially in combination with contracts.
+
+@examples[#:eval the-eval
+          (struct triangle (a b c))
+          (define the identity)
+          (define on identity)
+          (define of identity)
+          (define squares (curry map sqr))
+          (define hypotenuse triangle-c)
+          (define other-two-sides (fork (list) triangle-a triangle-b))
+          (define are-equal? =)
+          (define calculate compose)
+          (define/contract triangle-is-pythagorean?
+            (-> triangle? boolean?)
+            (fork (are-equal?)
+                  (calculate the sqr on the hypotenuse)
+                  (calculate the sum of the squares on the other-two-sides)))
+          (triangle-is-pythagorean? (triangle 3 4 5))
+          (triangle-is-pythagorean? (triangle 3 4 6))]
