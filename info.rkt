@@ -1,10 +1,14 @@
 #lang info
 
 (define collection 'multi)
-(define deps '("base" "rackunit-lib" "doc-coverage"))
+(define deps '("base"
+               "rackunit-lib"
+               "doc-coverage"))
 (define build-deps '("cover"
                      "doc-coverage"
                      "scribble-lib"
                      "rackunit-lib"
-                     "racket-doc"))
+                     "racket-doc"
+                     "math-doc"
+                     "math-lib"))
 (define license 'MIT)
