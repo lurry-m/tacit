@@ -48,7 +48,7 @@ These macros are inspired by @hyperlink["https://en.wikipedia.org/wiki/Tacit_pro
            (define average (fork (/) sum length))
            (average (range 10))
            (define euler-form (fork (make-rectangular) cos sin))
-           (euler-form 3.141592653589793)
+           (euler-form pi)
            (define positive-even-number? (fork (and) number? positive? even?))
            (map (fork (cons) id positive-even-number?)
                 (range 5))
@@ -67,13 +67,20 @@ These macros are inspired by @hyperlink["https://en.wikipedia.org/wiki/Tacit_pro
            ((fork3 (list) + * vector) 5 7 11)]}
 
 @defform[(fork* (first ...) second ...)]{
- Similar to  @racket[fork], but the @racket[procedure-arity] is identical to the arguments provided in @racket[second].
+ Similar to  @racket[fork], but the @racket[procedure-arity] is identical to the arguments provided in @racket[second]. Each argument in @racket[second] is
+ applied to one of the arguments in order.
  @examples[#:eval the-eval
            (define sqr-and-subtract (fork* (-) sqr sqr sqr))
            (procedure-arity sqr-and-subtract)
            (define pythagorean-triple? (° zero? sqr-and-subtract))
            (pythagorean-triple? 5 4 3)
-           (pythagorean-triple? 6 4 3)]}
+           (pythagorean-triple? 6 4 3)
+           (define square-and-sum (~ foldl (fork* (+) sqr id) 0))
+           (sum (map sqr (range 10)))
+           (square-and-sum (range 10))
+           (foldl (fork* (+) id /) 1 '(15 7 3))]
+
+ The @racket[fork*] is useful in combination with @racket[foldl]. The @racket[square-and-sum] is more performant and the last line is an example of how to calculate the continued fraction of pi: [3;7,15,1]. }
 
 
 @section{Syntactic sugar for mutable objects}
