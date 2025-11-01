@@ -23,10 +23,22 @@
 
 source code: @url["https://github.com/lurry-m/tacit"]
 
+@section{Some renamed identifier}
+
+Firstly, there are some shortcuts for renamed procedures.
+
+@deftogether[(
+@defthing[id  procedure? #:value values]
+@defthing[°  procedure? #:value compose]
+@defthing[~  procedure? #:value curry]
+@defthing[~~  procedure? #:value curryr]
+@defthing[:  procedure? #:value const]
+)]
+
+
 @section{The different variant of the fork-macros}
 
 These macros are inspired by @hyperlink["https://en.wikipedia.org/wiki/Tacit_programming#APL_family"]{APL (J)}.
-
 
 @defform[(fork (first ...) second ...)]{
  Returns the a unary function that applies the all the second arguments to the input and then the first arguments on the result.
@@ -38,7 +50,7 @@ These macros are inspired by @hyperlink["https://en.wikipedia.org/wiki/Tacit_pro
            (define euler-form (fork (make-rectangular) cos sin))
            (euler-form 3.141592653589793)
            (define positive-even-number? (fork (and) number? positive? even?))
-           (map (fork (cons) identity positive-even-number?)
+           (map (fork (cons) id positive-even-number?)
                 (range 5))
            (define displayln-and-negate
              (fork (begin) displayln -))
@@ -59,7 +71,7 @@ These macros are inspired by @hyperlink["https://en.wikipedia.org/wiki/Tacit_pro
  @examples[#:eval the-eval
            (define sqr-and-subtract (fork* (-) sqr sqr sqr))
            (procedure-arity sqr-and-subtract)
-           (define pythagorean-triple? (compose zero? sqr-and-subtract))
+           (define pythagorean-triple? (° zero? sqr-and-subtract))
            (pythagorean-triple? 5 4 3)
            (pythagorean-triple? 6 4 3)]}
 
@@ -103,7 +115,7 @@ procedures out of the box wich are similar to @racket[struct].
            (ht-- 2)
            (ht-count)
            (ht-map cons)
-           (ht-for-each (compose displayln list))
+           (ht-for-each (° displayln list))
            (ht-has-key? 5)
            ht]}
 
@@ -113,7 +125,7 @@ The @racket[fork]-macro is actually similar to the @racket[S] function in
 the @hyperlink["https://en.wikipedia.org/wiki/SKI_combinator_calculus"]{SKI-calculus}.
 
 @examples[#:eval the-eval
-          (define K const)
+          (define K :)
           (define I (fork () K K))
           (define P
             (fork (fork (fork ()) K) K))
@@ -160,14 +172,14 @@ be used to make the code more readable, especially in combination with contracts
 
 @examples[#:eval the-eval
           (struct triangle (a b c))
-          (define the identity)
-          (define on identity)
-          (define of identity)
-          (define squares (curry map sqr))
+          (define the id)
+          (define on id)
+          (define of id)
+          (define squares (~ map sqr))
           (define hypotenuse triangle-c)
           (define other-two-sides (fork (list) triangle-a triangle-b))
           (define are-equal? =)
-          (define calculate compose)
+          (define calculate °)
           (define/contract triangle-is-pythagorean?
             (-> triangle? boolean?)
             (fork (are-equal?)

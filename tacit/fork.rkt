@@ -1,6 +1,12 @@
 #lang racket
 
-(provide fork fork2 fork3 fork* define-vector define-mutable-hash)
+(provide fork fork2 fork3 fork* define-vector define-mutable-hash ° ~ ~~ id :)
+
+(define ° compose)
+(define ~ curry)
+(define ~~ curryr)
+(define id values)
+(define : const)
 
 (define-syntax-rule
   (define-syntax-case*
